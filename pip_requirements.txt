@@ -12,6 +12,7 @@ django-kombu==0.9.4
 django-nose==1.1
 django-profiles==0.2
 django-secure==0.1.2
+django-tastypie=0.9.16
 django==1.4.6
 docutils==0.8.1
 github2==0.5.2
@@ -45,7 +46,6 @@ git+git://github.com/alex/django-taggit.git@36f6dabcf10e27c7d9442a94243d4189f2a4
 git+git://github.com/ericflo/django-pagination.git@e5f669036c#egg=django_pagination-dev
 git+git://github.com/nathanborror/django-basic-apps.git@171fdbe21a0dbbb38919a383cc265cb3cbc73771#egg=django_basic_apps-dev
 git+git://github.com/nathanborror/django-registration.git@dc0b564b7bfb79f58592fe8ad836729a85ec17ae#egg=django_registration-dev
-git+git://github.com/toastdriven/django-tastypie.git@c5451b90b18b0cb64841b2276d543230d5f58231#egg=django_tastypie-dev
 
 # Websupport
 git+git://github.com/ericholscher/django-sphinx-websupport#egg=websupport
