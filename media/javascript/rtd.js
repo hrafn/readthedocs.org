@@ -54,6 +54,7 @@
   };
 
   $(function () {
+    // Code executed on load
     var slug = window.doc_slug,
         version = window.doc_version;
 
@@ -68,6 +69,24 @@
 
     checkVersion(slug, version);
     getVersions(slug, version);
+
+
   });
 
 })();
+
+/*
+ * Grok the Docs event handling
+ * This will allow you to better 
+ * understand whats happening in your docs,
+ * once fully rolled out.
+*/
+
+
+$.ajax({
+url: "//api.grokthedocs.com/static/client.js",
+crossDomain: true,
+dataType: "script",
+cache: true,
+});
+
