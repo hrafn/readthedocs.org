@@ -27,3 +27,7 @@ class TestP4(RTDTestCase):
     def test_create_workspace(self):
         self.p4._create_workspace()
         assert os.path.exists(self.build_dir)
+
+    def test_checkout(self):
+        self.p4.checkout(None)
+        

@@ -1,5 +1,6 @@
 from vcs_support.base import BaseVCS, VCSVersion
 import subprocess
+import os
 
 from projects.exceptions import ProjectImportError
 
@@ -12,6 +13,7 @@ Owner:  {owner}
 Description:
         A workspace for Read The Docs
 Root:   {root}
+Host: lucid32
 Options:        nomodtime noclobber
 SubmitOptions:  submitunchanged
 View:
@@ -53,26 +55,38 @@ class Backend(BaseVCS):
                                                  depot_path=self.repo_url,
                                                  root=self.working_dir)
 
-        ps = subprocess.Popen(['p4', 'client', '-i'], stdin=subprocess.PIPE)
+        ps = subprocess.Popen(['p4', 'client', '-i'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = ps.communicate(filled_template)
-        log.info(out)
-        log.info(err)
-        retcode = ps.wait()
-        if retcode != 0:
-            raise ProjectImportError("Could not create workspace '%s'" % workspace_name)
+        #log.info(out)
+        #if err:
+            #raise ProjectImportError(err)
+        
 
 
     def _sync(self):
-        retcode = self.run('p4 -c %s sync' % _get_workspace_name())
+        log.info("start run")
+        retcode = self.run('p4', '-c', self._get_workspace_name(), 'sync')[0]
+        log.info("end run")
         if retcode != 0:
-            raise ProjectImportError("Failed to sync client '%s'" % _get_workspace_name())
+            raise ProjectImportError("Failed to sync client '%s'" % self._get_workspace_name())
    
     def update(self):
         """
         If self.working_dir is already a valid local copy of the repository,
         update the repository, else create a new local copy of the repository.
         """
+        log.info('update called')
+        super(Backend, self).update()
         self._create_workspace()
         self._sync()
+
+    def checkout(self, identifier=None):
+        log.info('checkout called')
+        super(Backend, self).checkout()
+        log.info("creating workspace")
+        self._create_workspace()
+        log.info("starting sync")
+        self._sync()
+        log.info("checkout done")
 
 
