@@ -473,10 +473,13 @@ class Project(models.Model):
             log.debug('Inserting conf.py file path from model')
             return os.path.join(self.checkout_path(version), self.conf_py_file)
         files = self.find('conf.py', version)
-        for f in files:
-            os.chmod(f, stat.S_IRWXU)
         if not files:
             files = self.full_find('conf.py', version)
+        if not files:
+            files = self.full_find('config.py', version)
+        for f in files:
+            os.chmod(f, stat.S_IRWXU)
+
         if len(files) == 1:
             return files[0]
         elif len(files) > 1:
@@ -489,7 +492,7 @@ class Project(models.Model):
     def conf_dir(self, version='latest'):
         conf_file = self.conf_file(version)
         if conf_file:
-            return conf_file.replace('/conf.py', '')
+            return os.path.dirname(conf_file)
 
     @property
     def highest_version(self):

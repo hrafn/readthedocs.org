@@ -84,7 +84,7 @@ class Backend(BaseVCS):
         return False
 
     def _get_workspace_name(self):
-        return 'read_the_docs_%s' % self.name
+        return 'read_the_docs_%s' % self.name.replace(' ','-')
 
     def _create_workspace(self):
         workspace_name = self._get_workspace_name()
