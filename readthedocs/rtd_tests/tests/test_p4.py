@@ -17,17 +17,6 @@ class TestP4(RTDTestCase):
         self.p4.run('mkdir', self.build_dir) # So teardown won't fail
 
 
-    def test_workspace_exists(self):
-        nonexistant_workspace_exists = self.p4._workspace_exists('hrafng_test01')
-        self.assertFalse(nonexistant_workspace_exists)
-        existing_workspace_exists = self.p4._workspace_exists('lucid32')
-        self.assertTrue(existing_workspace_exists)
-
-
-    def test_create_workspace(self):
-        self.p4._create_workspace()
-        assert os.path.exists(self.build_dir)
-
     def test_checkout(self):
         self.p4.checkout(None)
         

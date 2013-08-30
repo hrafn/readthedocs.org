@@ -1,6 +1,7 @@
 import fnmatch
 import logging
 import os
+import stat
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -472,6 +473,8 @@ class Project(models.Model):
             log.debug('Inserting conf.py file path from model')
             return os.path.join(self.checkout_path(version), self.conf_py_file)
         files = self.find('conf.py', version)
+        for f in files:
+            os.chmod(f, stat.S_IRWXU)
         if not files:
             files = self.full_find('conf.py', version)
         if len(files) == 1:
