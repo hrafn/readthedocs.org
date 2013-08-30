@@ -161,6 +161,10 @@ class EnhancedModelResource(ModelResource):
             filters = request.GET
 
         applicable_filters = self.build_filters(filters=filters)
+
+        if "bundle" in kwargs:
+            del kwargs["bundle"]
+
         applicable_filters.update(kwargs)
 
         try:

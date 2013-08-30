@@ -180,7 +180,11 @@ class VersionResource(EnhancedModelResource):
     #     return bundle
 
     def get_object_list(self, request):
-        self._meta.queryset = Version.objects.public(user=request.user,
+        if request:
+            user = request.user
+        else:
+            user = None
+        self._meta.queryset = Version.objects.public(user=user,
                                                      only_active=False)
         return super(VersionResource, self).get_object_list(request)
 
