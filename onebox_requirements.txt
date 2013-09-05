@@ -5,5 +5,5 @@ gunicorn
 pillow
 pyquery
 python-memcached
-whoosh
+whoosh==2.4
 django-redis
