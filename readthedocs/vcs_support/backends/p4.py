@@ -6,6 +6,7 @@ import os
 from socket import gethostname
 
 from projects.exceptions import ProjectImportError
+from django.conf import settings
 
 import logging
 log = logging.getLogger(__name__)
@@ -34,10 +35,11 @@ class Backend(BaseVCS):
 
     def _load_configuration(self):
         config = ConfigParser.RawConfigParser()
+        ini_file_path = os.path.join(settings.SITE_ROOT, 'authorization.ini')
 
-        if not os.path.exists('../authorization.ini'):
+        if not os.path.exists(ini_file_path):
             raise ProjectImportError("Authorization configuration file missing")
-        config.read('../authorization.ini')
+        config.read(ini_file_path)
 
         self.p4_user = config.get('Perforce', 'P4USER')
         if self.p4_user == "NOTSPECIFIED":
@@ -48,7 +50,7 @@ class Backend(BaseVCS):
         self.p4_pass = config.get('Perforce', 'P4PASSWD')
         if self.p4_pass == "NOTSPECIFIED":
             raise ProjectImportError(
-                      "Perforce password must be configured in authorization.ini"
+                      "Perforce user credentials must be configured in %s" % ini_file_path
                   )
 
     def _login(self):
@@ -73,6 +75,7 @@ class Backend(BaseVCS):
         workspace_name = self._get_workspace_name()
         return self.run(
             'p4', 
+            '-u', self.p4_user,
             '-c', workspace_name,  
             *args
         )
@@ -90,14 +93,14 @@ class Backend(BaseVCS):
         workspace_name = self._get_workspace_name()
         filled_template = WORKSPACE_TEMPLATE.format(
                                                  client_name=workspace_name, 
-                                                 owner='hrafng', 
+                                                 owner=self.p4_user, 
                                                  depot_path=self.repo_url,
                                                  root=self.working_dir,
                                                  hostname=gethostname()
                                              )
 
         ps = subprocess.Popen(
-                            ['p4', 'client', '-i'], 
+                            ['p4', '-u', self.p4_user, 'client', '-i'], 
                             stdin=subprocess.PIPE, 
                             stdout=subprocess.PIPE, 
                             stderr=subprocess.PIPE
