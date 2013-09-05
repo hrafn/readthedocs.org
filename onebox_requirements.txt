@@ -7,3 +7,4 @@ pyquery
 python-memcached
 whoosh==2.4
 django-redis
+django-redis-cache
