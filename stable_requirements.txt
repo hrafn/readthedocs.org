@@ -16,7 +16,6 @@ celery-haystack==0.6.2
 distlib==0.1.2
 distribute==0.6.14
 django-appconf==0.6
-django-basic-apps==0.7
 django-celery==3.0.9
 django-celery-transactions==0.1.3
 django-cors-headers==0.11
