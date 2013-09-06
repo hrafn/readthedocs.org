@@ -30,7 +30,6 @@ django-pagination==1.0.7
 django-profiles==0.2
 django-registration==0.8
 django-secure==0.1.2
-django-sphinx-websupport==1.2.3
 django-taggit==0.10
 django-tastypie==0.9.16
 djangorestframework==2.3.6
