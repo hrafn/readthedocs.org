@@ -1,13 +1,10 @@
 from vcs_support.base import BaseVCS, VCSVersion
-
 import ConfigParser
 import subprocess
 import os
 from socket import gethostname
-
 from projects.exceptions import ProjectImportError
 from django.conf import settings
-
 import logging
 log = logging.getLogger(__name__)
 
@@ -34,6 +31,9 @@ class Backend(BaseVCS):
         self._load_configuration()
 
     def _load_configuration(self):
+        """
+        Read P4USER and P4PASSWD from authorization.ini
+        """
         config = ConfigParser.RawConfigParser()
         ini_file_path = os.path.join(settings.SITE_ROOT, 'authorization.ini')
 
@@ -53,40 +53,54 @@ class Backend(BaseVCS):
                       "Perforce user credentials must be configured in %s" % ini_file_path
                   )
 
-    def _login(self):
-        ps = subprocess.Popen(
-            ['p4', '-u', self.p4_user, 'login'],
-            stdin=subprocess.PIPE
-        )
-        out, err = ps.communicate(self.p4_pass)
-
     def _clean_repo_url(self):
+        """
+        Make sure the repo url ends with a trailing slash
+        """
         if self.repo_url[-1] != '/':
-            self.base_url = self.repo_url
             self.repo_url += '/'
-        else:
-            self.base_url = self.repo_url
+
+    def _run_p4_command(self, *args):
+        """
+        Run a p4 command with authorization.
+        """
+        os.environ["P4USER"] = self.p4_user
+        os.environ["P4PASSWD"] = self.p4_pass
+
+        ps = subprocess.Popen(
+                          args, 
+                          shell=False,
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE)
+        
+        stdout, stderr = ps.communicate()
+        return ps.returncode
 
     def _run_on_client(self, *args):
         """
         Run a P4 command on the current workspace
-        Returns a tuple of (return_code, stdout, stderr)
+        Returns the return code of the process
         """
         workspace_name = self._get_workspace_name()
-        return self.run(
-            'p4', 
+        return self._run_p4_command(
+            'p4',
             '-u', self.p4_user,
-            '-c', workspace_name,  
-            *args
-        )
+            '-c', workspace_name, 
+            *args)
 
     def _workspace_exists(self):
-        retcode = self._run_on_client('where', '//...')[0]
+        """
+        Check if a workspace already exists.
+        """
+        retcode = self._run_on_client('where', '//...')
         if retcode == 0:
             return True
         return False
 
     def _get_workspace_name(self):
+        """
+        Create the Perforce workspace name for the current project.
+        """
         return 'read_the_docs_%s' % self.name.replace(' ','-')
 
     def _create_workspace(self):
@@ -98,32 +112,35 @@ class Backend(BaseVCS):
                                                  root=self.working_dir,
                                                  hostname=gethostname()
                                              )
+        os.environ["P4USER"] = self.p4_user
+        os.environ["P4PASSWD"] = self.p4_pass
 
         ps = subprocess.Popen(
-                            ['p4', '-u', self.p4_user, 'client', '-i'], 
+                            ['p4', 'client', '-i'], 
                             stdin=subprocess.PIPE, 
                             stdout=subprocess.PIPE, 
-                            stderr=subprocess.PIPE
+                            stderr=subprocess.PIPE,
                         )
 
         out, err = ps.communicate(filled_template)
-        log.info(out)
         if err:
             raise ProjectImportError(err)
 
     def _sync(self):
-        retcode = self._run_on_client('sync')[0]
+        """
+        Sync the workspace for the current project.
+        """
+        retcode = self._run_on_client('sync')
         if retcode != 0:
             raise ProjectImportError(
                       "Failed to sync client '{workspace}'".format(
                           workspace=self._get_workspace_name()
                       )
                   )
-
         # Force sync conf files because they get modified by the doc builder
         retcode = self._run_on_client(
                            'sync', '-f', '//...conf.py'
-                       )[0]
+                       )
 
         if retcode != 0:
             raise ProjectImportError("Failed to force sync .conf files")
@@ -134,14 +151,15 @@ class Backend(BaseVCS):
         update the repository, else create a new local copy of the repository.
         """
         super(Backend, self).update()
-        self._login()
         if not self._workspace_exists():
             self._create_workspace()
         self._sync()
 
     def checkout(self, identifier=None):
+        """
+        Create a workspace and sync it.
+        """
         super(Backend, self).checkout()
-        self._login()
         self._create_workspace()
         self._sync()
 
