@@ -19,7 +19,7 @@ Description:
         A workspace for Read The Docs
 Root:   {root}
 Host: {hostname}
-Options:        nomodtime noclobber
+Options:        nomodtime clobber
 SubmitOptions:  submitunchanged
 View:
         {depot_path}...     "//{client_name}/..."
