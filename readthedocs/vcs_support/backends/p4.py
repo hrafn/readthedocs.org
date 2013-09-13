@@ -22,7 +22,7 @@ Host: {hostname}
 Options:        nomodtime clobber
 SubmitOptions:  submitunchanged
 View:
-        {depot_path}...     "//{client_name}/..."
+        {depot_path}...     "//{client_name}/{project_name}/..."
 """
 
 class Backend(BaseVCS):
@@ -101,7 +101,8 @@ class Backend(BaseVCS):
                                                  owner=self.p4_user, 
                                                  depot_path=self.repo_url,
                                                  root=self.working_dir,
-                                                 hostname=gethostname()
+                                                 hostname=gethostname(),
+                                                 project_name=self.name
                                              )
 
         ps = subprocess.Popen(
