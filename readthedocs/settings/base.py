@@ -18,17 +18,17 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-SITE_ROOT = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
+SITE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 DOCROOT = os.path.join(SITE_ROOT, 'user_builds')
 UPLOAD_ROOT = os.path.join(SITE_ROOT, 'user_uploads')
 CNAME_ROOT = os.path.join(SITE_ROOT, 'cnames')
 LOGS_ROOT = os.path.join(SITE_ROOT, 'logs')
 
-MEDIA_ROOT = '%s/media/' % (SITE_ROOT)
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
 # For 1.4
-STATIC_ROOT = os.path.join(SITE_ROOT, 'media/static/')
+STATIC_ROOT = os.path.join(SITE_ROOT, 'media', 'static')
 STATIC_URL = '/static/'
 #STATICFILES_DIRS = ()
 #STATICFILES_FINDERS = ()
@@ -89,7 +89,7 @@ CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
-    '%s/readthedocs/templates/' % SITE_ROOT,
+    os.path.join(SITE_ROOT,'readthedocs','templates'),
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -217,26 +217,20 @@ LOGGING = {
         },
         'exceptionlog': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.FileHandler',
             'filename': os.path.join(LOGS_ROOT, "exceptions.log"),
-            'maxBytes': maxBytes,
-            'backupCount': backup_count,
             'formatter': 'standard',
         },
         'errorlog': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.FileHandler',
             'filename': os.path.join(LOGS_ROOT, "rtd.log"),
-            'maxBytes': maxBytes,
-            'backupCount': backup_count,
             'formatter': 'standard',
         },
         'db': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.FileHandler',
             'filename': os.path.join(LOGS_ROOT, "db.log"),
-            'maxBytes': maxBytes,
-            'backupCount': backup_count,
             'formatter': 'standard',
         },
         'mail_admins': {

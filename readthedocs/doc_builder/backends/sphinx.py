@@ -76,15 +76,15 @@ else:
     html_context = context
 """
 
-TEMPLATE_DIR = '%s/readthedocs/templates/sphinx' % settings.SITE_ROOT
-STATIC_DIR = '%s/_static' % TEMPLATE_DIR
+TEMPLATE_DIR = os.path.join(settings.SITE_ROOT, 'readthedocs', 'templates', 'sphinx').replace('\\', '\\\\')
+STATIC_DIR = os.path.join(TEMPLATE_DIR, '_static')
 
 
 def _get_conf_py_path(version):
     conf_py_path = version.project.conf_file(version.slug)
     conf_py_path = conf_py_path.replace(
         version.project.checkout_path(version.slug), '')
-    return conf_py_path.replace('conf.py', '')
+    return conf_py_path.replace('conf.py', '').replace('\\', '\\\\')
 
 
 def _get_github_username_repo(version):

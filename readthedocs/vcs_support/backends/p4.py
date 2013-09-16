@@ -62,7 +62,8 @@ class Backend(BaseVCS):
             stderr=subprocess.PIPE
         )
         out, err = ps.communicate(self.p4_pass)
-        self.p4_ticket = out.replace('\n', '').split(' ')[-1]
+        self.p4_ticket = out.replace('\n', '').replace('\r', '').split(' ')[-1]
+        log.info('Ticket: "%s"', self.p4_ticket)
 
     def _clean_repo_url(self):
         if self.repo_url[-1] != '/':
@@ -111,6 +112,7 @@ class Backend(BaseVCS):
                             stdout=subprocess.PIPE, 
                             stderr=subprocess.PIPE
                         )
+        log.debug(['p4', '-u', self.p4_user, '-P', self.p4_ticket, 'client', '-i'])
 
         out, err = ps.communicate(filled_template)
         if err:
