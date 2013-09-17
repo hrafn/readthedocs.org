@@ -268,3 +268,7 @@ LOGGING = {
         },
     }
 }
+
+#[Perforce]
+P4USER = 'NOTSPECIFIED'
+P4PASSWD = 'NOTSPECIFIED'

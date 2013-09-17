@@ -169,7 +169,7 @@ class Project(models.Model):
     # virtual environment
     python_interpreter = models.CharField(
         _('Python Interpreter'),
-        max_length=20,
+        max_length=100,
         choices=constants.PYTHON_CHOICES,
         default='python',
         help_text=_("(Beta) The Python interpreter used to create the virtual "

@@ -1,7 +1,6 @@
 
 from vcs_support.base import BaseVCS, VCSVersion
 
-import ConfigParser
 import subprocess
 import os
 from socket import gethostname
@@ -26,8 +25,8 @@ View:
 """
 
 class Backend(BaseVCS):
-    supports_tags=False
-    fallback_branch=''
+    supports_tags = False
+    fallback_branch = ''
 
     def __init__(self, project, version):
         super(Backend, self).__init__(project, version)
@@ -35,23 +34,16 @@ class Backend(BaseVCS):
         self._load_configuration()
 
     def _load_configuration(self):
-        config = ConfigParser.RawConfigParser()
-        ini_file_path = os.path.join(settings.SITE_ROOT, 'authorization.ini')
-
-        if not os.path.exists(ini_file_path):
-            raise ProjectImportError("Authorization configuration file missing")
-        config.read(ini_file_path)
-
-        self.p4_user = config.get('Perforce', 'P4USER')
+        self.p4_user = getattr(settings, 'P4USER')
         if self.p4_user == "NOTSPECIFIED":
             raise ProjectImportError(
-                      "Perforce username must be configured in authorization.ini"
+                      "Perforce username must be configured"
                   )
 
-        self.p4_pass = config.get('Perforce', 'P4PASSWD')
+        self.p4_pass = getattr(settings, 'P4PASSWD')
         if self.p4_pass == "NOTSPECIFIED":
             raise ProjectImportError(
-                      "Perforce user credentials must be configured in %s" % ini_file_path
+                      "Perforce user credentials must be configured"
                   )
 
     def _login(self):
