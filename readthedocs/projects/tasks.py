@@ -322,7 +322,8 @@ def update_imported_docs(version_pk):
                     cmd='virtualenv-2.7 -p {interpreter}'.format(
                         interpreter=project.python_interpreter),
                     site_packages=site_packages,
-                    path=project.venv_path(version=version_slug)
+                    path=project.venv_path(version=version_slug),
+                    shell=True,
                 )
             )
             # Other code expects sphinx-build to be installed inside the
