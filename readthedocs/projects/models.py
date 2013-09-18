@@ -414,11 +414,7 @@ class Project(models.Model):
 
     def venv_bin(self, version='latest', bin='python'):
         if os.name == 'nt':
-            copied_script = os.path.join(self.venv_path(version), 'Scripts', bin)
-            non_copied_script = os.path.join(os.path.dirname(self.python_interpreter), 'Scripts', bin)
-            if os.path.exists(copied_script):
-                return copied_script
-            return non_copied_script
+            return os.path.join(self.venv_path(version), 'Scripts', bin + '.exe')
         else:
             return os.path.join(self.venv_path(version), 'bin', bin)
 

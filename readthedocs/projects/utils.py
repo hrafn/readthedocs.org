@@ -46,11 +46,12 @@ def run(*commands, **kwargs):
     cwd = os.getcwd()
     if not commands:
         raise ValueError("run() requires one or more command-line strings")
-    shell = kwargs.get('shell', False)
+    shell = kwargs.get('shell', True)
 
     for command in commands:
         if shell:
             log.info("Running commands in a shell")
+            log.info("cwd: '%s'" % cwd)
             run_command = command
         else:
             run_command = command.split()

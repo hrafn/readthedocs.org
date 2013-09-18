@@ -274,6 +274,7 @@ def update_docs(pk, record=True, pdf=True, man=True, epub=True, dash=True,
 def update_imported_docs(version_pk):
     """
     Check out or update the given project's repository.
+    :param version_pk:
     """
     version_data = api.version(version_pk).get()
     version = make_api_version(version_data)
@@ -363,7 +364,7 @@ def update_imported_docs(version_pk):
                 update_docs_output['install'] = run(
                     '{cmd} install --ignore-installed .'.format(
                         cmd=project.venv_bin(version=version_slug, bin='pip')))
-            else:
+            elif getattr(settings, 'SETUP_PY_INSTALL_ENABLED', True):
                 update_docs_output['install'] = run(
                     '{cmd} setup.py install --force'.format(
                         cmd=project.venv_bin(version=version_slug,
