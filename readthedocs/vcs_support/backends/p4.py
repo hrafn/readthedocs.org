@@ -85,14 +85,12 @@ class Backend(BaseVCS):
         return False
 
     def _get_workspace_name(self):
-        return 'read_the_docs_{project_name}_{hostname}'.format(
-            project_name=self.name.replace(' ', '-'),
-            hostname=gethostname())
+        return 'read_the_docs_%s' % self.name.replace(' ','-')
 
     def _create_workspace(self):
         workspace_name = self._get_workspace_name()
         filled_template = WORKSPACE_TEMPLATE.format(
-                                                 client_name=workspace_name,
+                                                 client_name=workspace_name, 
                                                  owner=self.p4_user, 
                                                  depot_path=self.repo_url,
                                                  root=self.working_dir,
