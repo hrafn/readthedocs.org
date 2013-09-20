@@ -21,7 +21,7 @@ Host: {hostname}
 Options:        nomodtime clobber
 SubmitOptions:  submitunchanged
 View:
-        {depot_path}...     "//{client_name}/{project_name}/..."
+        {depot_path}...     "//{client_name}/..."
 """
 
 class Backend(BaseVCS):
@@ -85,7 +85,10 @@ class Backend(BaseVCS):
         return False
 
     def _get_workspace_name(self):
-        return 'read_the_docs_%s' % self.name.replace(' ','-')
+        return 'read_the_docs_{project_name}_{host_name}'.format(
+            project_name=self.name.replace(' ','-'),
+            host_name=gethostname()
+        )
 
     def _create_workspace(self):
         workspace_name = self._get_workspace_name()
